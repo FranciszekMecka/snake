@@ -143,8 +143,6 @@ b = Background(Tile.tile_size, 'gray13')
 s = Snake(1)
 g = Game()
 
-timer = 0
-
 while True:
     g.controlls()
     b.print_bg(screen)
