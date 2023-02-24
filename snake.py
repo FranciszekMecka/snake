@@ -5,7 +5,11 @@ import random
 pygame.init()
 pygame.font.init()
 
+screen_w = 800
+screen_h = 600
+
 class Tile:
+    tile_size = 40
     def __init__(self, x: int, y: int, size: int, color: str) -> None:
         self.pos_x: int = x
         self.pos_y: int = y
@@ -36,7 +40,7 @@ class Background:
                 else:
                     self.Tiles.append(Tile(i, j, self.size, 'gray10'))
             i += self.size
-            if i == 800: # screen width
+            if i == screen_w:
                 i = 0
                 j += self.size
 
@@ -52,7 +56,7 @@ class Snake:
     
     def create_body(self):
         for x in range(self.length):
-            self.body.append(Tile(400 + x * 40, 400, 40, 'Green'))
+            self.body.append(Tile(400 + x * Tile.tile_size, 400, Tile.tile_size, 'Green'))
 
     def print_snake(self, screen):
         for x in self.body:
@@ -75,7 +79,7 @@ class Fruit:
     def __init__(self, x, y):
         self.pos_x = x
         self.pos_y = y
-        self.tile = Tile(200, 600, 40, 'red')
+        self.tile = Tile(x, y, Tile.tile_size, 'red')
 
     def print_fruit(self, screen):
         screen.blit(self.tile.surface, (self.pos_x, self.pos_y))
@@ -84,23 +88,25 @@ class Fruit:
         if (self.pos_x == snake.body[0].pos_x
              and self.pos_y == snake.body[0].pos_y):
             return True
+            
         return False
 
 class Game:
-    UP = (0, -40)
-    DOWN = (0, 40)
-    LEFT = (-40, 0)
-    RIGHT = (40, 0)
-    direction = (-40, 0)
+    UP = (0, -Tile.tile_size)
+    DOWN = (0, Tile.tile_size)
+    LEFT = (-Tile.tile_size, 0)
+    RIGHT = (Tile.tile_size, 0)
+    direction = (-Tile.tile_size, 0)
     my_font = pygame.font.SysFont('Arial', 30)
     
     def __init__(self) -> None:
-        self.fruits = [Fruit(random.randint(19*40), random.randint(14*40))]
+        self.fruits = [Fruit(200, 400)]
     def controlls(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     self.direction = self.UP
@@ -114,25 +120,27 @@ class Game:
     def fruit_controller(self, screen, snake: Snake):
         for x in self.fruits:
             x.print_fruit(screen)
+
             if(x.colision(snake)):
                 self.fruits.remove(x)
-                last_body = snake.body[-1]
                 snake.length += 1
-                # this needs to be done better
-                snake.body.append(Tile(last_body.pos_x, last_body.pos_y, 40, 'Green'))
-                self.fruits.append(Fruit(random.randint(0,19) * 40, random.randint(0,14) * 40))
+                last_body = snake.body[-1]
+                snake.body.append(Tile(last_body.pos_x, last_body.pos_y, Tile.tile_size, 'Green'))
+                self.fruits.append(Fruit(random.randint(0,int(screen_w/Tile.tile_size) - 1) * Tile.tile_size,
+                                          random.randint(0,int(screen_h/Tile.tile_size) - 1) * Tile.tile_size))
+
     def print_score(self, snake: Snake, screen):
         text_surface = self.my_font.render(f'Score: {snake.length}', False, (255, 255, 255))
         screen.blit(text_surface, (0,0))
 
 
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((screen_w, screen_h))
 pygame.display.set_caption('Snake')
 events = pygame.event.get()
 clock = pygame.time.Clock()
 
-b = Background(40, 'gray13')
-s = Snake(5)
+b = Background(Tile.tile_size, 'gray13')
+s = Snake(1)
 g = Game()
 
 timer = 0
