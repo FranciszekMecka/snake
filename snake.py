@@ -28,7 +28,7 @@ class Background:
     def generate_tiles(self):
         j = 0
         i = 0
-        while j < 600: # screen height
+        while j < screen_h:
             if int(i/self.size)%2 == 0:
                 if int(j/self.size)%2 == 0:
                     self.Tiles.append(Tile(i, j, self.size, 'gray10'))
@@ -68,6 +68,14 @@ class Snake:
             self.body[i].pos_y = self.body[i - 1].pos_y
         self.body[0].pos_x += direction[0]
         self.body[0].pos_y += direction[1]
+        if self.body[0].pos_x > screen_w:
+            self.body[0].pos_x = 0
+        if self.body[0].pos_y > screen_h:
+            self.body[0].pos_y = 0
+        if self.body[0].pos_x < 0:
+            self.body[0].pos_x = screen_w
+        if self.body[0].pos_y < 0:
+            self.body[0].pos_y = screen_h
         for i in range(1, len(self.body) - 1):
             if (self.body[i].pos_x == self.body[0].pos_x
                 and self.body[i].pos_y == self.body[0].pos_y):
@@ -108,13 +116,13 @@ class Game:
                 exit()
 
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP and self.direction != self.DOWN:
                     self.direction = self.UP
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN and self.direction != self.UP:
                     self.direction = self.DOWN
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT and self.direction != self.LEFT:
                     self.direction = self.RIGHT
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT and self.direction != self.RIGHT:
                     self.direction = self.LEFT
 
     def fruit_controller(self, screen, snake: Snake):
