@@ -29,13 +29,13 @@ class Background:
         j = 0
         i = 0
         while j < screen_h:
-            if int(i/self.size)%2 == 0:
-                if int(j/self.size)%2 == 0:
+            if (i//self.size)%2 == 0:
+                if (j//self.size)%2 == 0:
                     self.Tiles.append(Tile(i, j, self.size, 'gray10'))
                 else:
                     self.Tiles.append(Tile(i, j, self.size, self.color))
             else:
-                if int(j/self.size)%2 == 0:
+                if (j//self.size)%2 == 0:
                     self.Tiles.append(Tile(i, j, self.size, self.color))
                 else:
                     self.Tiles.append(Tile(i, j, self.size, 'gray10'))
@@ -56,7 +56,7 @@ class Snake:
     
     def create_body(self):
         for x in range(self.length):
-            self.body.append(Tile(400 + x * Tile.tile_size, 400, Tile.tile_size, 'Green'))
+            self.body.append(Tile(screen_w // 2 + x * Tile.tile_size, screen_w // 2, Tile.tile_size, 'Green'))
 
     def print_snake(self, screen):
         for x in self.body:
@@ -134,8 +134,8 @@ class Game:
                 snake.length += 1
                 last_body = snake.body[-1]
                 snake.body.append(Tile(last_body.pos_x, last_body.pos_y, Tile.tile_size, 'Green'))
-                self.fruits.append(Fruit(random.randint(0,int(screen_w/Tile.tile_size) - 1) * Tile.tile_size,
-                                          random.randint(0,int(screen_h/Tile.tile_size) - 1) * Tile.tile_size))
+                self.fruits.append(Fruit(random.randint(0,screen_w//Tile.tile_size - 1) * Tile.tile_size,
+                                          random.randint(0,screen_h//Tile.tile_size - 1) * Tile.tile_size))
 
     def print_score(self, snake: Snake, screen):
         text_surface = self.my_font.render(f'Score: {snake.length}', False, (255, 255, 255))
